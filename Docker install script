@@ -1,0 +1,26 @@
+---
+- name: install docker setup
+  hosts: all
+  tasks:
+    - name: install amazon-linux-extras
+      shell: yum -y install amazon-linux-extras
+
+    - name: docker setup
+      shell: amazon-linux-extras install docker -y
+
+    - name: start the service
+      service:
+        name: docker
+        state: restarted
+        enabled: yes
+
+    - name: docker run user
+      shell: usermod -a -G docker ec2-user
+
+    - name: check docker version
+      command: "docker version"
+      register: docversion
+
+    - name: print
+      debug:
+         var: docversion.stdout_lines
